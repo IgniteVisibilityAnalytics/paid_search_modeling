@@ -1,0 +1,132 @@
+---
+title: "Media Mix Modeling"
+author: "Austin Laliberte"
+date: "2/17/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+```
+
+## Brand Search
+
+```{r Brand Search}
+dat<-read.csv(file = "historical-brand_search.csv")
+dat<-filter(.data = dat, Week > as.Date("2020-05-03"))
+dat
+test<-lm(dat$CPS ~ dat$CPC)
+(results<-summary(test))
+(b.error<-results$coefficients[1,2])
+(m.error<-results$coefficients[2,2])
+m.error
+b.error
+
+(m = test$coefficients[2])
+(b = test$coefficients[1])
+m_low = m - 2*m.error
+b_low = b - 2*b.error
+m_high = m + 2*m.error
+b_high = b + 2*b.error
+
+g2<-ggplot(dat, aes(x=CPC, y=CPS)) +
+  geom_point() +
+  geom_smooth(method = lm) +
+  geom_abline(slope = m_low, intercept = b_low) +
+  geom_abline(slope = m_high, intercept = b_high) +
+  labs(title="Brand Search")
+g2
+
+
+a<-c(seq(7,15,0.1))
+
+dat2<-data.frame(a, m_low*a+b_low, m*a+b, m_high*a+b_high)
+dat2
+
+
+```
+
+- Looking at Brand Search, there is barely any correlation between cost and CPS
+- Range as big as $100 for confidence interval
+- 
+
+
+## Non-Brand Search
+
+```{r Non-Brand Search}
+
+dat<-read.csv(file = "historical-non_brand_search.csv")
+# dat<-filter(.data = dat, Week > as.Date("2020-05-03"))
+dat
+
+test<-lm(dat$CPS ~ dat$CPC)
+(results<-summary(test))
+(b.error<-results$coefficients[1,2])
+(m.error<-results$coefficients[2,2])
+m.error
+b.error
+
+(m = test$coefficients[2])
+(b = test$coefficients[1])
+m_low = m - 2*m.error
+b_low = b - 2*b.error
+m_high = m + 2*m.error
+b_high = b + 2*b.error
+
+g2<-ggplot(dat, aes(x=CPC, y=CPS)) +
+  geom_point() +
+  geom_smooth(method = lm) +
+  geom_abline(slope = m_low, intercept = b_low) +
+  geom_abline(slope = m_high, intercept = b_high) +
+  labs(title="Brand Search")
+g2
+
+# g2<-ggplot(dat, aes(x=CPC, y=Cost)) +
+#   geom_point() 
+# g2
+
+a<-c(seq(30,40,0.1))
+b<-c(seq(7,15,0.1))
+
+dat2<-data.frame(a, m_low*a+b_low, m*a+b, m_high*a+b_high)
+dat2
+
+```
+
+
+```{r Non-Brand Search}
+
+
+CPS = T / [(Brand Search sales)+(NB Sales)]
+
+
+Brand Search Sale = (T % (allocation%)) / CPS)
+
+
+(CPS = E[CPC])
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
